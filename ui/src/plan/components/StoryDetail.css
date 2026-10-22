@@ -1,0 +1,405 @@
+/* Story Detail Panel */
+.story-detail-panel {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--plan-bg-surface);
+  border-left: 1px solid var(--plan-border);
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 32px);
+}
+
+/* Split 模式下：浮動 overlay，定位在左半邊右緣，不蓋到終端機 */
+.plan-view--split .story-detail-panel {
+  position: absolute;
+  right: 50%;
+  top: 0;
+  height: 100%;
+  max-height: 100%;
+  z-index: 10;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+}
+
+.story-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.story-detail-id {
+  font-size: 11px;
+  color: var(--plan-text-dim);
+  font-family: inherit;
+}
+
+.story-detail-close {
+  font-family: inherit;
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+
+.story-detail-close:hover {
+  background: var(--plan-bg-card);
+  color: var(--plan-text);
+}
+
+.story-detail-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--plan-text);
+}
+
+.story-detail-desc {
+  font-size: 12px;
+  color: var(--plan-text-muted);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.story-detail-meta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.story-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.story-detail-label {
+  font-size: 10px;
+  color: var(--plan-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.story-detail-value {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.story-detail-value[data-status='todo'] { color: var(--plan-status-todo); }
+.story-detail-value[data-status='in-progress'] { color: var(--plan-status-in-progress); }
+.story-detail-value[data-status='in-review'] { color: var(--plan-status-in-review); }
+.story-detail-value[data-status='done'] { color: var(--plan-status-done); }
+
+.status-selector {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.status-btn {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--plan-border);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+}
+
+.status-btn:hover {
+  background: var(--plan-bg-card);
+  color: var(--plan-text);
+}
+
+.status-btn.active {
+  font-weight: 600;
+}
+
+.status-btn.active[data-status='todo'] {
+  border-color: var(--plan-status-todo);
+  color: var(--plan-status-todo);
+}
+
+.status-btn.active[data-status='in-progress'] {
+  border-color: var(--plan-status-in-progress);
+  color: var(--plan-status-in-progress);
+}
+
+.status-btn.active[data-status='in-review'] {
+  border-color: var(--plan-status-in-review);
+  color: var(--plan-status-in-review);
+}
+
+.status-btn.active[data-status='done'] {
+  border-color: var(--plan-status-done);
+  color: var(--plan-status-done);
+}
+
+.story-detail-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.story-detail-link {
+  font-size: 11px;
+  color: var(--plan-text-dim);
+  margin-top: 4px;
+}
+
+/* Section */
+.story-detail-section {
+  margin-top: 16px;
+}
+
+.story-detail-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--plan-text-muted);
+  margin-bottom: 8px;
+}
+
+/* Task List */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.task-item {
+  background: var(--plan-bg-card);
+  border-radius: 4px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--plan-status-todo);
+}
+
+.task-item[data-status='in-progress'] { border-left-color: var(--plan-status-in-progress); }
+.task-item[data-status='in-review'] { border-left-color: var(--plan-status-in-review); }
+.task-item[data-status='done'] { border-left-color: var(--plan-status-done); }
+
+.task-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.task-item-row:first-child {
+  margin-bottom: 4px;
+}
+
+.task-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--plan-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-item-project {
+  font-size: 11px;
+  color: var(--plan-text-dim);
+}
+
+.task-item-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--plan-border);
+  background: transparent;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.task-item-status-pill:hover {
+  background: var(--plan-bg-card-hover);
+}
+
+.task-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--plan-status-todo);
+}
+
+.task-item-status-pill[data-status='in-progress'] .task-status-dot { background: var(--plan-status-in-progress); }
+.task-item-status-pill[data-status='in-review'] .task-status-dot { background: var(--plan-status-in-review); }
+.task-item-status-pill[data-status='done'] .task-status-dot { background: var(--plan-status-done); }
+
+.task-item-delete {
+  font-family: inherit;
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: var(--plan-text-dim);
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.task-item:hover .task-item-delete {
+  opacity: 1;
+}
+
+.task-item-delete:hover {
+  color: #ef4444;
+}
+
+/* Task Add Form */
+.task-add-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.task-add-form input,
+.task-add-form select {
+  flex: 1;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 5px 8px;
+  background: var(--plan-bg);
+  border: 1px solid var(--plan-border);
+  border-radius: 3px;
+  color: var(--plan-text);
+}
+
+.task-add-form button {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid var(--plan-border);
+  border-radius: 3px;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.task-add-form button:hover:not(:disabled) {
+  background: var(--plan-bg-card);
+  color: var(--plan-text);
+}
+
+.task-add-form button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Acceptance Criteria */
+.acceptance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.acceptance-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--plan-bg-card);
+  border-radius: 4px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--plan-accent);
+}
+
+.acceptance-card-text {
+  flex: 1;
+  font-size: 12px;
+  color: var(--plan-text-muted);
+  line-height: 1.5;
+  min-width: 0;
+}
+
+.acceptance-remove {
+  font-family: inherit;
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: var(--plan-text-dim);
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.acceptance-card:hover .acceptance-remove {
+  opacity: 1;
+}
+
+.acceptance-remove:hover {
+  color: #ef4444;
+}
+
+.acceptance-add-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.acceptance-add-form input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 5px 8px;
+  background: var(--plan-bg);
+  border: 1px solid var(--plan-border);
+  border-radius: 3px;
+  color: var(--plan-text);
+}
+
+.acceptance-add-form button {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid var(--plan-border);
+  border-radius: 3px;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+}
+
+.acceptance-add-form button:hover:not(:disabled) {
+  background: var(--plan-bg-card);
+  color: var(--plan-text);
+}
+
+.acceptance-add-form button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.story-detail-delete-btn {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  color: #ef4444;
+  background: transparent;
+  border: 1px solid #ef4444;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.story-detail-delete-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}

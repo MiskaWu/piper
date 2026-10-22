@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "node /usr/local/bin/piper-hook.mjs"}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "node /usr/local/bin/piper-hook.mjs"}]}],
+    "StopFailure": [{"hooks": [{"type": "command", "command": "node /usr/local/bin/piper-hook.mjs"}]}],
+    "PreToolUse": [{"hooks": [{"type": "command", "command": "node /usr/local/bin/piper-hook.mjs"}]}],
+    "Notification": [{"hooks": [{"type": "command", "command": "node /usr/local/bin/piper-hook.mjs"}]}],
+    "SubagentStart": [{"hooks": [{"type": "command", "command": "node /usr/local/bin/piper-hook.mjs"}]}]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node /usr/local/bin/piper-statusline.mjs"
+  }
+}

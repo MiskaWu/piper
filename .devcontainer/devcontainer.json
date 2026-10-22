@@ -1,0 +1,60 @@
+{
+  "name": "home-user-projects-piper DevContainer",
+
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "CLAUDE_CODE_VERSION": "2.1.109"
+    }
+  },
+
+  "runArgs": [
+    "--cap-add=SYS_ADMIN",
+    "--cap-add=NET_ADMIN"
+  ],
+
+  "initializeCommand": "mkdir -p ~/.claude-devcontainers/-home-user-projects-piper/sessions ~/.claude-devcontainers/-home-user-projects-piper/projects && mkdir -p ~/.ssh && rm -f ~/.ssh/ssh-agent.sock && if [ -n \"$SSH_AUTH_SOCK\" ] && [ -S \"$SSH_AUTH_SOCK\" ]; then ln -sf \"$SSH_AUTH_SOCK\" ~/.ssh/ssh-agent.sock; else touch ~/.ssh/ssh-agent.sock; fi",
+
+  "mounts": [
+    "source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude-devcontainers/-home-user-projects-piper/sessions,target=/home/node/.claude/sessions,type=bind",
+    "source=${localEnv:HOME}/.claude-devcontainers/-home-user-projects-piper/projects,target=/home/node/.claude/projects,type=bind",
+    "source=${localEnv:HOME}/.ssh/ssh-agent.sock,target=/ssh-agent,type=bind"
+  ],
+
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace",
+
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "SSH_AUTH_SOCK": "/ssh-agent",
+    "GIT_SSH_COMMAND": "/usr/local/bin/git-ssh-helper.sh",
+    "FIREWALL_MODE": "open",
+    "ALLOWED_DOMAINS": "api.anthropic.com,claude.ai,statsig.anthropic.com,sentry.io,registry.npmjs.org,npmjs.com,github.com,api.github.com,raw.githubusercontent.com,objects.githubusercontent.com,proxy.golang.org,sum.golang.org,storage.googleapis.com,pypi.org,files.pythonhosted.org,crates.io,static.crates.io,registry-1.docker.io,auth.docker.io,production.cloudflare.docker.com"
+  },
+
+  "remoteUser": "node",
+
+  "postStartCommand": "ssh-keyscan github.com gitlab.com bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null && sudo /usr/local/bin/init-firewall.sh && echo '{\"hasCompletedOnboarding\":true,\"installMethod\":\"native\"}' > /home/node/.claude/.claude.json && jq '{statusLine}' /usr/local/share/piper-hooks.json > /home/node/.claude/settings.json && mkdir -p /workspace/.claude && jq 'del(.statusLine)' /usr/local/share/piper-hooks.json > /workspace/.claude/settings.local.json",
+
+  "waitFor": "postStartCommand",
+
+  "postAttachCommand": "echo '\\nalias claude=\"claude --dangerously-skip-permissions\"' >> ~/.bashrc && echo '[claude] 全自動模式已啟用：claude 指令預設帶 --dangerously-skip-permissions'",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "golang.go"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  "piper": {
+    "templateVersion": 16
+  }
+}

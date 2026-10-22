@@ -1,0 +1,111 @@
+.ft-tree {
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.ft-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding-right: 8px;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.ft-dir {
+  cursor: pointer;
+}
+
+.ft-row:hover {
+  background: rgba(56, 139, 253, 0.1);
+}
+
+.ft-icon {
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.ft-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ft-dir .ft-name {
+  color: var(--accent);
+}
+
+.ft-file .ft-name {
+  color: var(--text-primary);
+}
+
+.ft-status {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  width: 14px;
+  text-align: center;
+}
+
+.ft-status-dot {
+  font-size: 8px;
+}
+
+.ft-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.ft-row.ft-selected {
+  background: rgba(56, 139, 253, 0.15);
+}
+
+.ft-row.ft-cut {
+  opacity: 0.5;
+}
+
+.ft-context-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 120px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-size: 12px;
+}
+
+.ft-context-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.ft-context-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.ft-context-separator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border);
+}
+
+.ft-clipboard-hint {
+  padding: 4px 8px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}

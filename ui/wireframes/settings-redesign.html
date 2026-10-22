@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piper 設定視窗重構 — Handoff Wireframe</title>
+<style>
+/* === Reset & Base === */
+.wf *, .wf *::before, .wf *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.wf { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; line-height: 1.5; color: #e0e0e0; }
+
+/* === 螢幕容器 === */
+.wf {
+  max-width: 900px;
+  margin: 20px auto;
+  background: #16213e;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  position: relative;
+  border: 1px solid #3a3a5c;
+}
+
+/* === 元件名標籤 === */
+.wf-label {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,153,0,0.15);
+  color: #ff9900;
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  z-index: 10;
+}
+
+/* === 卡片 === */
+.wf-card {
+  background: #262640;
+  border: 1px solid #3a3a5c;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+/* === 區塊標題 === */
+.wf-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+/* === 分隔線 === */
+.wf-divider {
+  border: none;
+  border-top: 1px solid #2a2a4a;
+  margin: 12px 0;
+}
+
+/* === 按鈕 === */
+.wf-btn {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  color: #ffffff;
+  text-align: center;
+}
+.wf-btn-primary { background: #ff9900; }
+.wf-btn-primary:hover { background: #e68a00; }
+.wf-btn-ghost { background: transparent; border: 1px solid #3a3a5c; color: #a0a0b8; }
+.wf-btn-ghost:hover { background: rgba(255,255,255,0.05); color: #e0e0e0; }
+.wf-btn-sm { padding: 3px 10px; font-size: 0.7rem; }
+
+/* === 佈局 === */
+.wf-row { display: flex; gap: 12px; align-items: center; }
+.wf-row-between { display: flex; justify-content: space-between; align-items: center; }
+.wf-stack { display: flex; flex-direction: column; gap: 8px; }
+
+/* === 表單 === */
+.wf-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: #1e1e3a;
+  border: 1px solid #3a3a5c;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 0.8rem;
+}
+.wf-input::placeholder { color: #666680; }
+.wf-select {
+  width: 100%;
+  padding: 8px 12px;
+  background: #1e1e3a;
+  border: 1px solid #3a3a5c;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 0.8rem;
+}
+.wf-toggle {
+  width: 40px;
+  height: 22px;
+  background: #3a3a5c;
+  border-radius: 11px;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.wf-toggle::after {
+  content: '';
+  width: 18px;
+  height: 18px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+.wf-toggle-on { background: #ff9900; }
+.wf-toggle-on::after { transform: translateX(18px); }
+.wf-form-label {
+  font-size: 0.75rem;
+  color: #a0a0b8;
+  margin-bottom: 4px;
+  display: block;
+}
+.wf-form-group { margin-bottom: 12px; }
+
+/* === 側邊欄 === */
+.wf-sidebar-layout { display: flex; }
+.wf-sidebar {
+  width: 160px;
+  background: #1a1a2e;
+  border-right: 1px solid #3a3a5c;
+  padding: 12px 0;
+  flex-shrink: 0;
+}
+.wf-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  color: #a0a0b8;
+  cursor: pointer;
+}
+.wf-sidebar-item:hover { background: rgba(255,255,255,0.03); color: #e0e0e0; }
+.wf-sidebar-item-active { color: #ff9900; background: rgba(255,153,0,0.08); }
+.wf-sidebar-content { flex: 1; padding: 20px; overflow-y: auto; }
+
+/* === Modal === */
+.wf-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.wf-modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0;
+}
+.wf-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 0;
+}
+
+/* === Handoff 標註 === */
+.wf-annotate {
+  position: relative;
+  outline: 1px dashed transparent;
+  transition: outline-color 0.2s;
+}
+.wf-annotate:hover { outline-color: #00bcd4; }
+.wf-annotate-info {
+  display: none;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  transform: translateY(-100%);
+  background: #1a1a2e;
+  border: 1px solid #00bcd4;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.65rem;
+  color: #e0e0e0;
+  z-index: 200;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+.wf-annotate:hover .wf-annotate-info { display: block; }
+.wf-annotate-info dt { color: #00bcd4; font-weight: 600; margin-bottom: 2px; }
+.wf-annotate-info dd { margin: 0 0 6px 0; color: #a0a0b8; }
+
+/* === 輔助 === */
+.wf-text-muted { color: #a0a0b8; }
+.wf-text-primary { color: #ff9900; }
+.wf-text-sm { font-size: 0.75rem; }
+.wf-text-xs { font-size: 0.65rem; }
+.wf-mt-sm { margin-top: 8px; }
+.wf-mt-md { margin-top: 12px; }
+.wf-mb-sm { margin-bottom: 8px; }
+.wf-flex-1 { flex: 1; }
+
+/* ========================================
+   Handoff 專用：圖例與頁面樣式
+   ======================================== */
+body {
+  background: #0f0f1e;
+  margin: 0;
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #e0e0e0;
+}
+.handoff-legend {
+  max-width: 900px;
+  margin: 0 auto 16px;
+  padding: 12px 16px;
+  background: rgba(0,188,212,0.08);
+  border: 1px solid rgba(0,188,212,0.3);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #a0a0b8;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.handoff-legend span { color: #00bcd4; font-weight: 600; }
+.screen-title {
+  max-width: 900px;
+  margin: 0 auto 8px;
+  font-size: 0.85rem;
+  color: #a0a0b8;
+  padding-left: 4px;
+}
+
+/* === 自訂：Settings Dialog 專用佈局 === */
+.settings-dialog {
+  background: #262640;
+  border: 1px solid #3a3a5c;
+  border-radius: 10px;
+  width: 740px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #3a3a5c;
+}
+.settings-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.settings-nav {
+  width: 160px;
+  background: #1e1e38;
+  border-right: 1px solid #3a3a5c;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  color: #a0a0b8;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.settings-nav-item:hover {
+  background: rgba(255,255,255,0.03);
+  color: #e0e0e0;
+}
+.settings-nav-item-active {
+  color: #ff9900;
+  background: rgba(255,153,0,0.06);
+  border-left-color: #ff9900;
+}
+.settings-nav-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.settings-content {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+  min-height: 320px;
+}
+.settings-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid #3a3a5c;
+  background: #1e1e38;
+}
+</style>
+</head>
+<body>
+
+<!-- Handoff 圖例 -->
+<div class="handoff-legend">
+  <span>HANDOFF</span>
+  將滑鼠移到虛線框元素上，可查看元件名稱、尺寸、間距與對應 API endpoint。
+</div>
+
+<!-- ============================================================
+     畫面：Settings Dialog（每日摘要 tab active）
+     ============================================================ -->
+<div class="screen-title">Settings Dialog — 左側導航 + 右側內容（每日摘要 active）</div>
+
+<div class="wf" style="min-height: 520px;">
+  <span class="wf-label">SettingsModal</span>
+
+  <!-- 半透明遮罩背景 -->
+  <div class="wf-modal-overlay">
+
+    <!-- Settings Dialog 本體 -->
+    <div class="wf-annotate settings-dialog">
+      <div class="wf-annotate-info">
+        <dl>
+          <dt>元件</dt><dd>SettingsModal → .settings-dialog</dd>
+          <dt>尺寸</dt><dd>740px × max 80vh</dd>
+          <dt>佈局</dt><dd>flex column: header / body(nav+content) / footer</dd>
+          <dt>變更</dt><dd>原 .modal-card maxWidth:640 → 改為專用 class</dd>
+        </dl>
+      </div>
+
+      <!-- Header -->
+      <div class="wf-annotate settings-header">
+        <div class="wf-modal-title">設定</div>
+        <div class="wf-annotate-info">
+          <dl>
+            <dt>區塊</dt><dd>.settings-header</dd>
+            <dt>間距</dt><dd>padding: 16px 20px 12px</dd>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Body: Nav + Content -->
+      <div class="settings-body">
+
+        <!-- Left Nav -->
+        <div class="wf-annotate settings-nav">
+          <div class="wf-annotate-info">
+            <dl>
+              <dt>元件</dt><dd>.settings-nav（左側導航）</dd>
+              <dt>尺寸</dt><dd>160px 固定寬</dd>
+              <dt>背景</dt><dd>#1e1e38（比 dialog 稍深）</dd>
+              <dt>互動</dt><dd>active item 左邊框 3px accent</dd>
+            </dl>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">⚙</span>
+            <span>一般</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
+            </span>
+            <span>Git</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">◎</span>
+            <span>狀態偵測</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">🛡</span>
+            <span>防火牆</span>
+          </div>
+          <div class="settings-nav-item settings-nav-item-active">
+            <span class="settings-nav-icon">📋</span>
+            <span>每日摘要</span>
+          </div>
+        </div>
+
+        <!-- Right Content -->
+        <div class="wf-annotate settings-content">
+          <div class="wf-annotate-info">
+            <dl>
+              <dt>元件</dt><dd>.settings-content（右側內容區）</dd>
+              <dt>間距</dt><dd>padding: 20px 24px</dd>
+              <dt>尺寸</dt><dd>flex: 1, min-height: 320px</dd>
+              <dt>溢出</dt><dd>overflow-y: auto（內容超出可捲動）</dd>
+            </dl>
+          </div>
+
+          <!-- Digest Tab Content -->
+          <div class="wf-stack" style="gap: 16px;">
+
+            <!-- Webhook URL -->
+            <div class="wf-annotate wf-form-group" style="margin-bottom: 0;">
+              <div class="wf-annotate-info">
+                <dl>
+                  <dt>欄位</dt><dd>Discord Webhook URL</dd>
+                  <dt>型別</dt><dd>input[type=url]</dd>
+                  <dt>API</dt><dd>PUT /api/settings/digest</dd>
+                </dl>
+              </div>
+              <label class="wf-form-label" style="font-size: 0.8rem; color: #e0e0e0; margin-bottom: 6px;">Discord Webhook URL</label>
+              <div class="wf-input" style="padding: 8px 12px; color: #a0a0b8; font-size: 0.78rem; font-family: monospace;">
+                https://discord.com/api/webhooks/14855...
+              </div>
+            </div>
+
+            <!-- Auto schedule toggle -->
+            <div class="wf-annotate">
+              <div class="wf-annotate-info">
+                <dl>
+                  <dt>欄位</dt><dd>自動排程 (enabled)</dd>
+                  <dt>型別</dt><dd>toggle (boolean)</dd>
+                  <dt>API</dt><dd>PUT /api/settings/digest</dd>
+                </dl>
+              </div>
+              <div class="wf-row-between">
+                <span style="font-size: 0.8rem;">自動排程</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="wf-toggle wf-toggle-on"></div>
+                  <span class="wf-text-sm wf-text-muted">已啟用</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Send hour -->
+            <div class="wf-annotate">
+              <div class="wf-annotate-info">
+                <dl>
+                  <dt>欄位</dt><dd>發送時間 (sendHour)</dd>
+                  <dt>型別</dt><dd>select (0–23)</dd>
+                  <dt>條件</dt><dd>僅在 enabled=true 時顯示</dd>
+                </dl>
+              </div>
+              <div class="wf-row-between">
+                <span style="font-size: 0.8rem;">發送時間</span>
+                <div class="wf-select" style="width: auto; min-width: 220px; padding: 6px 10px; font-size: 0.78rem;">
+                  UTC 23:00 (台灣 07:00) ▾
+                </div>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="wf-divider" style="margin: 4px 0;">
+
+            <!-- Manual send -->
+            <div class="wf-annotate">
+              <div class="wf-annotate-info">
+                <dl>
+                  <dt>區塊</dt><dd>手動發送</dd>
+                  <dt>API</dt><dd>POST /api/digest/send (SSE)</dd>
+                  <dt>行為</dt><dd>SSE 推播進度，按鈕顯示 spinner</dd>
+                </dl>
+              </div>
+              <div class="wf-row-between">
+                <div>
+                  <div style="font-size: 0.8rem;">手動發送</div>
+                  <div class="wf-text-xs wf-text-muted">立即發送昨日摘要到 Discord</div>
+                </div>
+                <span class="wf-btn wf-btn-ghost wf-btn-sm" style="padding: 5px 14px;">立即發送</span>
+              </div>
+              <div class="wf-text-xs wf-text-muted wf-mt-sm">
+                AI 摘要：client (3/5)
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="wf-annotate settings-footer">
+        <div class="wf-annotate-info">
+          <dl>
+            <dt>元件</dt><dd>.settings-footer</dd>
+            <dt>間距</dt><dd>padding: 12px 20px</dd>
+            <dt>行為</dt><dd>儲存 disabled 直到有變更 (dirty check)</dd>
+          </dl>
+        </div>
+        <span class="wf-btn wf-btn-ghost">取消</span>
+        <span class="wf-btn wf-btn-primary">儲存</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     畫面 2：Settings Dialog — 一般 tab（對比用）
+     ============================================================ -->
+<div class="screen-title" style="margin-top: 24px;">Settings Dialog — 一般 tab（展示導航高亮切換）</div>
+
+<div class="wf" style="min-height: 420px;">
+  <span class="wf-label">SettingsModal — General</span>
+
+  <div class="wf-modal-overlay">
+    <div class="settings-dialog">
+
+      <!-- Header -->
+      <div class="settings-header">
+        <div class="wf-modal-title">設定</div>
+      </div>
+
+      <!-- Body -->
+      <div class="settings-body">
+
+        <!-- Left Nav -->
+        <div class="settings-nav">
+          <div class="settings-nav-item settings-nav-item-active">
+            <span class="settings-nav-icon">⚙</span>
+            <span>一般</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
+            </span>
+            <span>Git</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">◎</span>
+            <span>狀態偵測</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">🛡</span>
+            <span>防火牆</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">📋</span>
+            <span>每日摘要</span>
+          </div>
+        </div>
+
+        <!-- Right Content: General Tab -->
+        <div class="settings-content">
+          <div class="wf-stack" style="gap: 14px;">
+
+            <div class="wf-annotate wf-row-between">
+              <div class="wf-annotate-info">
+                <dl>
+                  <dt>欄位</dt><dd>ModelConfig.devcontainerGen</dd>
+                  <dt>API</dt><dd>PUT /api/settings/models</dd>
+                </dl>
+              </div>
+              <span style="font-size: 0.8rem;">DevContainer 產生</span>
+              <div class="wf-select" style="width: auto; min-width: 140px; padding: 6px 10px; font-size: 0.78rem;">
+                預設 (opus) ▾
+              </div>
+            </div>
+
+            <div class="wf-row-between">
+              <span style="font-size: 0.8rem;">自動摘要</span>
+              <div class="wf-select" style="width: auto; min-width: 140px; padding: 6px 10px; font-size: 0.78rem;">
+                預設 (haiku) ▾
+              </div>
+            </div>
+
+            <div class="wf-row-between">
+              <span style="font-size: 0.8rem;">Idea 充實</span>
+              <div class="wf-select" style="width: auto; min-width: 140px; padding: 6px 10px; font-size: 0.78rem;">
+                預設 (sonnet) ▾
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="settings-footer">
+        <span class="wf-btn wf-btn-ghost">取消</span>
+        <span class="wf-btn wf-btn-primary" style="opacity: 0.5; cursor: not-allowed;">儲存</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     畫面 3：Settings Dialog — 狀態偵測 tab（展示長內容捲動）
+     ============================================================ -->
+<div class="screen-title" style="margin-top: 24px;">Settings Dialog — 狀態偵測 tab（展示長列表 + 捲動）</div>
+
+<div class="wf" style="min-height: 520px;">
+  <span class="wf-label">SettingsModal — Patterns</span>
+
+  <div class="wf-modal-overlay">
+    <div class="settings-dialog">
+
+      <div class="settings-header">
+        <div class="wf-modal-title">設定</div>
+      </div>
+
+      <div class="settings-body">
+
+        <div class="settings-nav">
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">⚙</span>
+            <span>一般</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
+            </span>
+            <span>Git</span>
+          </div>
+          <div class="settings-nav-item settings-nav-item-active">
+            <span class="settings-nav-icon">◎</span>
+            <span>狀態偵測</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">🛡</span>
+            <span>防火牆</span>
+          </div>
+          <div class="settings-nav-item">
+            <span class="settings-nav-icon">📋</span>
+            <span>每日摘要</span>
+          </div>
+        </div>
+
+        <div class="wf-annotate settings-content">
+          <div class="wf-annotate-info">
+            <dl>
+              <dt>注意</dt><dd>此 tab 內容較長，overflow-y: auto 生效</dd>
+              <dt>API</dt><dd>PUT /api/settings/status-patterns</dd>
+            </dl>
+          </div>
+
+          <div class="wf-text-xs wf-text-muted wf-mb-sm">
+            子字串比對（不分大小寫）或 regex。Claude 版本更新時可即時調整，不需重啟。
+          </div>
+
+          <!-- Working patterns -->
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 0.78rem; font-weight: 600; margin-bottom: 6px;">Working（執行中）</div>
+            <div class="wf-stack" style="gap: 4px;">
+              <div class="wf-row" style="gap: 6px;">
+                <div class="wf-input" style="padding: 5px 8px; font-size: 0.75rem; font-family: monospace; flex: 1;">esc to interrupt</div>
+                <span class="wf-text-xs wf-text-muted" style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 12px; height: 12px; border: 1px solid #3a3a5c; border-radius: 2px; display: inline-block;"></span>
+                  regex
+                </span>
+                <span style="color: #666680; cursor: pointer;">×</span>
+              </div>
+              <div class="wf-row" style="gap: 6px;">
+                <div class="wf-input" style="padding: 5px 8px; font-size: 0.75rem; font-family: monospace; flex: 1;">ctrl+c to interrupt</div>
+                <span class="wf-text-xs wf-text-muted" style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 12px; height: 12px; border: 1px solid #3a3a5c; border-radius: 2px; display: inline-block;"></span>
+                  regex
+                </span>
+                <span style="color: #666680; cursor: pointer;">×</span>
+              </div>
+              <div class="wf-row" style="gap: 6px;">
+                <div class="wf-input" style="padding: 5px 8px; font-size: 0.75rem; font-family: monospace; flex: 1;">⏳</div>
+                <span class="wf-text-xs wf-text-muted" style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 12px; height: 12px; border: 1px solid #3a3a5c; border-radius: 2px; display: inline-block;"></span>
+                  regex
+                </span>
+                <span style="color: #666680; cursor: pointer;">×</span>
+              </div>
+              <div class="wf-row" style="gap: 6px;">
+                <div class="wf-input" style="padding: 5px 8px; font-size: 0.75rem; font-family: monospace; flex: 1;">background tasks still running</div>
+                <span class="wf-text-xs wf-text-muted" style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 12px; height: 12px; border: 1px solid #3a3a5c; border-radius: 2px; display: inline-block;"></span>
+                  regex
+                </span>
+                <span style="color: #666680; cursor: pointer;">×</span>
+              </div>
+              <span class="wf-btn wf-btn-ghost wf-btn-sm" style="align-self: flex-start;">+ 新增</span>
+            </div>
+          </div>
+
+          <!-- Needs Input patterns -->
+          <div>
+            <div style="font-size: 0.78rem; font-weight: 600; margin-bottom: 6px;">Needs Input（等待輸入）</div>
+            <div class="wf-stack" style="gap: 4px;">
+              <div class="wf-row" style="gap: 6px;">
+                <div class="wf-input" style="padding: 5px 8px; font-size: 0.75rem; font-family: monospace; flex: 1;">[y/n]</div>
+                <span class="wf-text-xs wf-text-muted" style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 12px; height: 12px; border: 1px solid #3a3a5c; border-radius: 2px; display: inline-block;"></span>
+                  regex
+                </span>
+                <span style="color: #666680; cursor: pointer;">×</span>
+              </div>
+              <div class="wf-row" style="gap: 6px;">
+                <div class="wf-input" style="padding: 5px 8px; font-size: 0.75rem; font-family: monospace; flex: 1;">Do you want</div>
+                <span class="wf-text-xs wf-text-muted" style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 12px; height: 12px; border: 1px solid #3a3a5c; border-radius: 2px; display: inline-block;"></span>
+                  regex
+                </span>
+                <span style="color: #666680; cursor: pointer;">×</span>
+              </div>
+              <div class="wf-row" style="gap: 6px;">
+                <div class="wf-input" style="padding: 5px 8px; font-size: 0.75rem; font-family: monospace; flex: 1;">^\\? </div>
+                <span class="wf-text-xs wf-text-muted" style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 12px; height: 12px; border: 1px solid #3a3a5c; border-radius: 2px; display: inline-block; background: #ff9900;"></span>
+                  regex
+                </span>
+                <span style="color: #666680; cursor: pointer;">×</span>
+              </div>
+              <span class="wf-btn wf-btn-ghost wf-btn-sm" style="align-self: flex-start;">+ 新增</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="settings-footer">
+        <span class="wf-btn wf-btn-ghost">取消</span>
+        <span class="wf-btn wf-btn-primary">儲存</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

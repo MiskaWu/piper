@@ -1,0 +1,50 @@
+You are a DevContainer migration tool. Your task is to extract ONLY the language-specific Dockerfile instructions from a contaminated fragment.
+
+## Context
+
+A legacy DevContainer Dockerfile had no separation between base-image content and language-specific content. During upgrade, the entire Dockerfile body was incorrectly captured as a "language layer fragment." You need to identify and extract ONLY the language/tool installation parts.
+
+## Base Image Content (EXCLUDE these)
+
+The base image already provides all of the following. Any instructions that install or configure these should be EXCLUDED:
+
+- Node.js (Debian bookworm-slim based)
+- System tools: git, curl, wget, ca-certificates, openssh-client, ripgrep, fd-find, jq, tree, zsh, sudo
+- Firewall: iptables, ipset, init-firewall.sh
+- Claude Code CLI (`npm install -g @anthropic-ai/claude-code`)
+- User setup: `node` user with passwordless sudo, .claude directory
+- SSH setup: .ssh directory, git-ssh-helper.sh, known_hosts
+- Working directory: /workspace
+
+## Contaminated Fragment
+
+```dockerfile
+{{.ContaminatedFragment}}
+```
+
+## Instructions
+
+1. Read the fragment above carefully.
+2. Identify instructions that install languages, SDKs, or development tools NOT in the base image (e.g., Go, Python, Rust, Java, additional npm global packages beyond Claude Code).
+3. Identify VS Code extension IDs related to those languages.
+4. If the fragment contains ONLY base-image content with no additional language/tool layers, return empty values.
+
+## Output Format
+
+Return ONLY a JSON object. No markdown fences, no explanation.
+
+{"dockerfileFragment": "ARG GO_VERSION=1.22.0\nRUN curl ...\n\nUSER node\nRUN go install ...", "vscodeExtensions": ["golang.go"]}
+
+- `dockerfileFragment` — Only language/tool installation instructions. Do NOT add `USER root` at the start (base is already root). Do NOT add `USER node` or `WORKDIR` at the end (template handles those). Add `USER node` only before user-space installs. Empty string "" if no language layer found.
+- `vscodeExtensions` — VS Code extension IDs for detected languages. Empty array [] if none.
+
+## Reference: Valid Language Layer Examples
+
+{{.LanguageLayers}}
+
+## Important Rules
+
+- EXCLUDE anything related to: apt-get system tools, sudo/user setup, firewall, SSH, Claude Code CLI, .claude directory, WORKDIR, FROM
+- INCLUDE: language SDKs (Go, Python, Rust, Java), language tools (gopls, pylint, cargo), additional npm packages (pnpm, turbo, tsx)
+- If unsure whether something is base or language, EXCLUDE it
+- ONLY output the JSON object

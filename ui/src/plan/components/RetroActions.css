@@ -1,0 +1,173 @@
+.retro-actions {
+  padding: 12px;
+  border-bottom: 1px solid var(--plan-border);
+}
+
+.retro-actions-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.retro-actions-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--plan-text);
+}
+
+.retro-actions-count {
+  font-size: 11px;
+  color: var(--plan-text-muted);
+}
+
+.retro-actions-loading,
+.retro-actions-empty {
+  font-size: 12px;
+  color: var(--plan-text-muted);
+  padding: 8px 4px;
+}
+
+.retro-actions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.retro-action-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.retro-action-row:hover {
+  background: var(--plan-bg-card-hover);
+}
+
+.retro-action-row--done .retro-action-desc {
+  color: var(--plan-text-dim);
+  text-decoration: line-through;
+}
+
+.retro-action-checkbox {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.retro-action-desc {
+  flex: 1;
+  font-size: 12px;
+  color: var(--plan-text);
+  word-break: break-word;
+}
+
+.retro-action-badge {
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--plan-tag-bg);
+  color: var(--plan-accent);
+  font-family: ui-monospace, monospace;
+}
+
+.retro-action-delete {
+  flex-shrink: 0;
+  visibility: hidden;
+  background: none;
+  border: none;
+  color: var(--plan-text-dim);
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 12px;
+}
+
+.retro-action-row:hover .retro-action-delete {
+  visibility: visible;
+}
+
+.retro-action-delete:hover {
+  color: var(--danger, #ef4444);
+}
+
+.retro-actions-add {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.retro-actions-input {
+  flex: 1;
+  font-size: 12px;
+  padding: 6px 8px;
+  border: 1px solid var(--plan-border);
+  border-radius: 4px;
+  background: var(--plan-bg-surface);
+  color: var(--plan-text);
+  font-family: inherit;
+  outline: none;
+}
+
+.retro-actions-input:focus {
+  border-color: var(--plan-accent);
+}
+
+.retro-actions-btn {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--plan-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.retro-actions-btn--primary {
+  border-color: var(--plan-accent);
+  color: var(--plan-accent);
+}
+
+.retro-actions-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.retro-actions-add-btn {
+  margin-top: 8px;
+  width: 100%;
+  font-size: 12px;
+  padding: 6px;
+  border: 1px dashed var(--plan-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.retro-actions-add-btn:hover {
+  border-color: var(--plan-accent);
+  color: var(--plan-accent);
+}
+
+.retro-actions-done {
+  margin-top: 10px;
+}
+
+.retro-actions-done > summary {
+  font-size: 11px;
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.retro-actions-done > summary:hover {
+  color: var(--plan-text);
+}

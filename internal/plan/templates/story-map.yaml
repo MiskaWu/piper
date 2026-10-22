@@ -1,0 +1,16 @@
+meta:
+  name: "{name}"
+  updated: "{date}"
+  owner: ""
+  releases:
+    - id: rel-mvp01
+      label: "MVP"
+      color: blue
+
+activities:
+  - id: act-00001
+    name: "核心功能"
+    steps:
+      - id: step-00001
+        name: "第一步"
+        stories: []

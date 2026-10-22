@@ -1,0 +1,22 @@
+piper
+node_modules/
+tmp/
+refs/
+dist/
+.vite/
+.claude/settings.local.json
+# dispatch 產物（setupProject 自動生成，source of truth 在 internal/plan/references/）
+.claude/skills/bind/
+.claude/skills/breakdown/
+.claude/skills/manifest/
+.claude/skills/submit/
+.claude/skills/verify/
+# design skill 由 epiccontainer 注入到 plan workspace（source of truth：internal/epiccontainer/references/design-skill.md），piper 自己不該有副本
+.claude/skills/design/
+.claude/.infra-version
+.claude/rules/task-brief.md
+.claude/rules/wave-isolation.md
+.claude/scripts/check-briefs.sh
+.claude/scripts/verify-setup-worktree.sh
+.claude/scripts/verify-diff-gate.sh
+.claude/scripts/verify-cleanup-worktree.sh

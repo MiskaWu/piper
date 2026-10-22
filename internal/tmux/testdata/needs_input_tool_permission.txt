@@ -1,0 +1,14 @@
+Tool use
+
+   Web Search("Kiro AI IDE Amazon spec driven development requirements design implementation 2025 2026")
+
+   Claude wants to search the web for: Kiro AI IDE Amazon spec driven development requirements design implementation 2025 2026
+
+
+ Do you want to proceed?
+
+ ❯ 1. Yes
+   2. Yes, and don't ask again for Web Search commands in /home/user
+   3. No
+
+ Esc to cancel · Tab to amend

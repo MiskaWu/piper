@@ -1,0 +1,76 @@
+.retro-report-viewer {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.retro-report-viewer--empty {
+  color: var(--plan-text-muted);
+  font-size: 12px;
+}
+
+.retro-report-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--plan-border);
+  margin-bottom: 8px;
+}
+
+.retro-report-tab {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--plan-border);
+  border-radius: 12px;
+  background: var(--plan-bg-surface);
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.retro-report-tab:hover {
+  background: var(--plan-bg-card-hover);
+  color: var(--plan-text);
+}
+
+.retro-report-tab--active {
+  background: var(--plan-accent);
+  color: #fff;
+  border-color: var(--plan-accent);
+}
+
+.retro-report-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.retro-report-loading,
+.retro-report-error {
+  font-size: 12px;
+  color: var(--plan-text-muted);
+  padding: 8px 4px;
+}
+
+.retro-report-error {
+  color: var(--danger, #ef4444);
+}
+
+.retro-report-md {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--plan-text);
+  padding: 8px;
+  margin: 0;
+  background: var(--plan-bg-card);
+  border: 1px solid var(--plan-border);
+  border-radius: 4px;
+}
