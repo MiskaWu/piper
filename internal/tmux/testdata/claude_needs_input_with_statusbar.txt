@@ -1,0 +1,14 @@
+  Claude Code v1.2.3
+
+  I want to edit the following file:
+
+  src/config.go
+
+  Allow Read access to src/config.go?
+
+✻ Took 5s
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯
+
+⏵⏵ auto-accept edits (shift+tab to cycle)

@@ -1,0 +1,70 @@
+.retro-trends {
+  padding: 12px;
+  border-bottom: 1px solid var(--plan-border);
+}
+
+.retro-trends-empty {
+  color: var(--plan-text-muted);
+  font-size: 12px;
+  margin: 8px 4px;
+}
+
+.retro-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.retro-metric-card {
+  padding: 8px 10px;
+  border: 1px solid var(--plan-border);
+  border-radius: 6px;
+  background: var(--plan-bg-card);
+}
+
+.retro-metric-label {
+  font-size: 11px;
+  color: var(--plan-text-muted);
+  margin-bottom: 2px;
+}
+
+.retro-metric-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--plan-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.retro-metric-delta {
+  font-size: 11px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.retro-metric-delta--good { color: var(--plan-status-done); }
+.retro-metric-delta--bad  { color: var(--danger, #ef4444); }
+.retro-metric-delta--flat { color: var(--plan-text-dim); }
+
+.retro-sparklines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.retro-sparkline-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--plan-accent);
+}
+
+.retro-sparkline-label {
+  flex: 0 0 78px;
+  font-size: 11px;
+  color: var(--plan-text-muted);
+}
+
+.retro-sparkline {
+  display: block;
+}

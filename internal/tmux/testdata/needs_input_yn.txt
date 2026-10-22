@@ -1,0 +1,7 @@
+  Claude Code v1.2.3
+
+  I found 3 files that need to be updated.
+
+  ⎿  Updated src/main.go (+5 -3)
+
+  Do you want to apply these changes? [Y/n]

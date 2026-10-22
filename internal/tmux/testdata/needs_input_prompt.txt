@@ -1,0 +1,8 @@
+  Claude Code v1.2.3
+
+  I can help with several tasks:
+
+  ? Select an option
+    1. Refactor code
+    2. Write tests
+    3. Fix bug

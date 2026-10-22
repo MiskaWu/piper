@@ -1,0 +1,16 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  entrypoint = "./tmp/piper"
+  args_bin = ["--port", "8633"]
+  cmd = "go build -o ./tmp/piper ."
+  delay = 500
+  exclude_dir = ["tmp", "ui", "node_modules", ".git"]
+  exclude_regex = ["_test\\.go$"]
+  include_ext = ["go", "html", "css", "js"]
+  include_dir = [".", "static"]
+  kill_delay = 500
+
+[log]
+  main_only = true

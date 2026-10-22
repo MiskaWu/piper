@@ -1,0 +1,109 @@
+@import "tailwindcss";
+@import "./styles/global.css" layer(components);
+@import "./components/GitGraph.css" layer(components);
+@import "./components/SidePanel.css" layer(components);
+@import "./components/FilesTree.css" layer(components);
+@import "./plan/components/PlanView.css" layer(components);
+@import "./plan/components/StoryMap.css" layer(components);
+@import "./plan/components/StoryDetail.css" layer(components);
+
+@custom-variant dark (&:is([data-theme="dark"] *));
+
+/*
+ * Tailwind token → Piper CSS variable 映射
+ *
+ * 色彩的 source of truth 在 global.css 的 :root / [data-theme] 區塊。
+ * 這裡只做語意映射，不重新定義色值。
+ */
+@theme inline {
+  /* 基礎色 — 映射到 global.css 的 --bg-* / --text-* / --border */
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --color-card: var(--bg-secondary);
+  --color-card-foreground: var(--text-primary);
+  --color-popover: var(--bg-secondary);
+  --color-popover-foreground: var(--text-primary);
+  --color-primary: var(--accent);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--bg-secondary);
+  --color-secondary-foreground: var(--text-primary);
+  --color-muted: var(--bg-secondary);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent: var(--bg-tertiary);
+  --color-accent-foreground: var(--text-primary);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+
+  /* Sidebar */
+  --color-sidebar-background: var(--bg-secondary);
+  --color-sidebar-foreground: var(--text-primary);
+  --color-sidebar-primary: var(--accent);
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: var(--bg-tertiary);
+  --color-sidebar-accent-foreground: var(--text-primary);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--accent);
+  --color-sidebar-muted-foreground: var(--text-secondary);
+
+  /* 狀態色 */
+  --color-status-working: var(--status-working);
+  --color-status-completed: var(--status-completed);
+  --color-status-needs-input: var(--status-needs-input);
+  --color-status-idle: var(--status-idle);
+
+  /* 語意色 */
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-text-tertiary: var(--text-tertiary);
+
+  /* Plan (Story Map) */
+  --color-plan-bg: var(--plan-bg);
+  --color-plan-surface: var(--plan-bg-surface);
+  --color-plan-card: var(--plan-bg-card);
+  --color-plan-card-hover: var(--plan-bg-card-hover);
+  --color-plan-text: var(--plan-text);
+  --color-plan-text-muted: var(--plan-text-muted);
+  --color-plan-text-dim: var(--plan-text-dim);
+  --color-plan-border: var(--plan-border);
+  --color-plan-accent: var(--plan-accent);
+
+  /* 圓角 */
+  --radius-sm: 0.225rem;
+  --radius-md: 0.425rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 1.025rem;
+
+  /* 動畫 */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body, #root {
+    height: 100%;
+    overflow: hidden;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

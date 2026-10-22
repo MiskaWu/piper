@@ -1,0 +1,220 @@
+.sp-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border);
+}
+
+/* --- Section: accordion item --- */
+.sp-section {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: flex 0.25s ease;
+}
+
+.sp-section.sp-collapsed {
+  flex: 0 0 29px;
+}
+
+.sp-section.sp-expanded {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* --- Section header (always visible) --- */
+.sp-section-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 29px;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.sp-section.sp-collapsed .sp-section-header {
+  color: var(--text-secondary);
+}
+
+.sp-section.sp-collapsed .sp-section-header:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* --- Drag handle --- */
+.sp-drag-handle {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.sp-drag-handle:hover {
+  color: var(--text-secondary);
+}
+
+.sp-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* --- Chevron (collapse indicator) --- */
+.sp-chevron {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: transform 0.25s ease;
+}
+
+.sp-chevron-expanded {
+  transform: rotate(90deg);
+}
+
+/* --- Section title --- */
+.sp-section-title {
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.sp-section.sp-expanded .sp-section-title {
+  color: var(--text-primary);
+}
+
+/* --- Header action buttons --- */
+.sp-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.sp-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0 4px;
+  border-radius: 3px;
+  line-height: 18px;
+}
+
+.sp-badge-ahead {
+  color: var(--success);
+}
+
+.sp-badge-behind {
+  color: var(--danger);
+}
+
+.sp-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.sp-action-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.sp-action-btn.sp-action-active {
+  color: var(--success);
+}
+
+.sp-action-btn.sp-action-active:hover {
+  color: var(--success);
+}
+
+.sp-action-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@keyframes sp-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sp-action-spinning {
+  animation: sp-spin 1s linear infinite;
+}
+
+/* --- Panel header bar (fixed at top) --- */
+.sp-panel-header {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  height: 29px;
+  flex-shrink: 0;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  box-sizing: border-box;
+}
+
+.sp-panel-header-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+
+/* --- Panel collapse button --- */
+.sp-collapse-panel-btn {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.sp-collapse-panel-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* --- Section content (animated) --- */
+.sp-section-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 1;
+  transition: opacity 0.2s ease 0.05s;
+}
+
+.sp-collapsed .sp-section-content {
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+}

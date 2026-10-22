@@ -1,0 +1,208 @@
+/* Story Map — 2D Grid */
+.story-map-grid {
+  display: grid;
+  grid-auto-rows: max-content;
+  gap: 0;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.grid-corner {
+  background: var(--plan-bg);
+}
+
+.activity-header {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 10px;
+  background: var(--plan-bg-surface);
+  border-bottom: 2px solid var(--plan-accent);
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.step-header {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 8px 10px;
+  background: var(--plan-bg-surface);
+  color: var(--plan-text-muted);
+  text-align: center;
+  border-bottom: 1px solid var(--plan-border);
+}
+
+.release-label {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 8px;
+  text-align: center;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--plan-bg);
+  border-right: 1px solid var(--plan-border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+}
+
+.release-remove-btn {
+  font-family: inherit;
+  font-size: 10px;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0;
+  padding: 1px 4px;
+  transition: opacity 0.15s;
+}
+
+.release-label:hover .release-remove-btn {
+  opacity: 0.6;
+}
+
+.release-remove-btn:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.release-remove-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0;
+}
+
+.release-label:hover .release-remove-btn:disabled {
+  opacity: 0.25;
+}
+
+.story-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  min-height: 48px;
+  min-width: 0;
+  border-bottom: 1px solid var(--plan-border);
+  border-right: 1px solid var(--plan-border);
+}
+
+.release-row-contents:last-child .story-cell {
+  border-bottom: none;
+}
+
+.release-row-contents:last-child .release-label {
+  border-bottom: none;
+}
+
+/* Activity separator */
+.activity-start {
+  border-left: 2px solid var(--plan-accent);
+}
+
+/* Drag & Drop */
+.story-cell.drag-over {
+  background: var(--plan-drag-over-bg);
+  outline: 2px dashed var(--plan-accent);
+  outline-offset: -2px;
+}
+
+.drop-indicator {
+  height: 2px;
+  background: var(--plan-accent);
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Add Step button in activity header */
+.add-step-btn {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  background: none;
+  border: 1px dashed transparent;
+  border-radius: 3px;
+  color: var(--plan-text-dim);
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  opacity: 0;
+  transition: all 0.15s;
+}
+
+.activity-header:hover .add-step-btn {
+  opacity: 0.6;
+}
+
+.add-step-btn:hover {
+  opacity: 1 !important;
+  border-color: var(--plan-accent);
+  color: var(--plan-accent);
+}
+
+/* Add step overlay */
+.add-step-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  background: var(--plan-bg-surface);
+  border: 1px solid var(--plan-accent);
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Add Activity column */
+.add-col-header {
+  min-width: 48px;
+  padding: 8px 4px;
+}
+
+.add-col-spacer {
+  min-width: 48px;
+  border-bottom: 1px solid var(--plan-border);
+}
+
+.add-activity-btn {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  background: none;
+  border: 1px dashed var(--plan-border);
+  border-radius: 3px;
+  color: var(--plan-text-dim);
+  cursor: pointer;
+  padding: 0 6px;
+  line-height: 1.2;
+  transition: all 0.15s;
+}
+
+.add-activity-btn:hover {
+  border-color: var(--plan-accent);
+  color: var(--plan-accent);
+}
+
+/* Shared inline input for add step/activity */
+.add-inline-input {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 5px 8px;
+  border: 1px solid var(--plan-accent);
+  border-radius: 3px;
+  background: var(--plan-bg-surface);
+  color: var(--plan-text);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.add-inline-input:focus {
+  outline: none;
+}

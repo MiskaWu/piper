@@ -1,0 +1,352 @@
+.plan-view {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.plan-view-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 16px;
+  min-width: 0;
+}
+
+.plan-view--split .plan-view-main {
+  max-width: 50%;
+}
+
+.plan-view-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.plan-view-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: text;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: background 0.15s ease;
+}
+
+.plan-view-header h2:hover {
+  background: var(--bg-hover, #2a2a2a);
+}
+
+input.plan-view-title--editing {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--text-primary, #e6edf3);
+  background: var(--bg-hover, #2a2a2a);
+  border: 1.5px solid #4D96FF;
+  border-radius: 6px;
+  padding: 4px 8px;
+  outline: none;
+}
+
+.plan-view-loading,
+.plan-view-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--text-secondary, #888);
+  font-size: 0.95rem;
+}
+
+.plan-view-error {
+  color: var(--error-color, #e55);
+}
+
+.plan-view-terminal {
+  flex: 1;
+  border-left: 1px solid var(--border-color, #333);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-view-retro {
+  flex: 1;
+  border-left: 1px solid var(--border-color, #333);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.plan-view-side-tab {
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 1.5px solid var(--plan-border);
+  border-radius: 10px;
+  background: var(--plan-bg-surface);
+  color: var(--plan-text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.plan-view-side-tab:hover {
+  color: var(--plan-text);
+  border-color: var(--plan-accent);
+}
+
+.plan-view-side-tab--active {
+  background: var(--plan-accent);
+  color: #fff;
+  border-color: var(--plan-accent);
+}
+
+/* ── 共用按鈕基底 ── */
+.plan-session-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--border-color, #444);
+  background: var(--bg-secondary, #1c1c1c);
+  color: var(--text-primary, #e6edf3);
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.plan-session-btn:hover .secretary-mouse,
+.plan-session-btn:hover .dispatch-mouse,
+.plan-session-btn:hover .retro-mouse {
+  animation: mouse-wiggle 0.4s ease;
+}
+
+.plan-session-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.plan-session-btn__label {
+  line-height: 1;
+}
+
+/* ── Hero 樣式：大按鈕，視覺焦點 ── */
+.plan-session-btn--hero {
+  gap: 10px;
+  padding: 8px 24px 8px 14px;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  min-width: 140px;
+  justify-content: center;
+  border-color: #4D96FF;
+  background: linear-gradient(135deg, rgba(77, 150, 255, 0.08), rgba(77, 150, 255, 0.02));
+  box-shadow: 0 2px 8px rgba(77, 150, 255, 0.12);
+}
+
+.plan-session-btn--hero .secretary-mouse,
+.plan-session-btn--hero .dispatch-mouse,
+.plan-session-btn--hero .retro-mouse {
+  width: 48px;
+  height: 54px;
+}
+
+.plan-session-btn--hero:hover {
+  background: linear-gradient(135deg, rgba(77, 150, 255, 0.15), rgba(77, 150, 255, 0.05));
+  border-color: #6aafff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(77, 150, 255, 0.25);
+}
+
+/* ── Compact 樣式：規劃中，縮回標題旁 ── */
+.plan-session-btn--compact {
+  padding: 6px 14px 6px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.plan-session-btn--compact .secretary-mouse,
+.plan-session-btn--compact .dispatch-mouse,
+.plan-session-btn--compact .retro-mouse {
+  width: 28px;
+  height: 32px;
+}
+
+.plan-session-btn--active {
+  border-color: var(--error-color, #e55);
+  color: var(--error-color, #e55);
+}
+
+.plan-session-btn--active:hover {
+  border-color: var(--error-color, #e55);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(238, 85, 85, 0.2);
+}
+
+/* ── 按鈕群組 ── */
+.plan-view-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── 派送按鈕色彩 ── */
+.dispatch-btn.plan-session-btn--hero {
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(76, 175, 80, 0.02));
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.12);
+}
+
+.dispatch-btn.plan-session-btn--hero:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.05));
+  border-color: #81C784;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.25);
+}
+
+/* ── 派鼠共用基底 ── */
+.secretary-mouse,
+.dispatch-mouse,
+.retro-mouse {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.secretary-mouse--active,
+.dispatch-mouse--active,
+.retro-mouse--active {
+  filter: hue-rotate(320deg) saturate(0.8);
+}
+
+/* ── Retro 按鈕色彩（原收割） ── */
+.retro-btn.plan-session-btn--hero {
+  border-color: #F59E0B;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.02));
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+}
+
+.retro-btn.plan-session-btn--hero:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+  border-color: #FBBF24;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25);
+}
+
+/* ── Infra 更新徽章 ── */
+.infra-update-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1.5px solid #F59E0B;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.1);
+  color: #FBBF24;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.infra-update-badge:hover {
+  background: rgba(245, 158, 11, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.infra-update-badge:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.infra-update-badge--ok {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.08);
+  color: #86efac;
+}
+
+.infra-update-badge--ok:disabled {
+  opacity: 0.7;
+}
+
+.claude-version-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1.5px solid var(--border, #3a3a4a);
+  border-radius: 8px;
+  background: rgba(100, 116, 139, 0.12);
+  color: var(--text-secondary, #94a3b8);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: default;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+button.claude-version-badge {
+  cursor: pointer;
+}
+
+button.claude-version-badge:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button.claude-version-badge:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.claude-version-badge--ok {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.08);
+  color: #86efac;
+}
+
+.claude-version-badge--needs-update {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  color: #7dd3fc;
+}
+
+.claude-version-badge--needs-update:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.22);
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+}
+
+.claude-version-badge--updating {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  animation: claude-badge-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes claude-badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.claude-version-badge--error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+}
+
+@keyframes mouse-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}

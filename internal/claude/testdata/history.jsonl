@@ -1,0 +1,9 @@
+{"display":"implement feature X","pastedContents":{},"timestamp":1773215036404,"project":"/home/user/project-a","sessionId":"aaa-111"}
+{"display":"fix bug in module Y","pastedContents":{},"timestamp":1773215100000,"project":"/home/user/project-a","sessionId":"aaa-111"}
+{"display":"refactor service Z","pastedContents":{},"timestamp":1773215200000,"project":"/home/user/project-b","sessionId":"bbb-222"}
+{"display":"exit","pastedContents":{},"timestamp":1773215300000,"project":"/home/user/project-a","sessionId":"aaa-111"}
+{"display":"login","pastedContents":{},"timestamp":1773215400000,"project":"/home/user/project-a","sessionId":"aaa-111"}
+{"display":"","pastedContents":{},"timestamp":1773215500000,"project":"/home/user/project-a","sessionId":"aaa-111"}
+{"display":"/help","pastedContents":{},"timestamp":1773215600000,"project":"/home/user/project-a","sessionId":"aaa-111"}
+{"display":"/compact","pastedContents":{},"timestamp":1773215700000,"project":"/home/user/project-a","sessionId":"aaa-111"}
+{"display":"different day prompt","pastedContents":{},"timestamp":1773128636404,"project":"/home/user/project-a","sessionId":"aaa-111"}
