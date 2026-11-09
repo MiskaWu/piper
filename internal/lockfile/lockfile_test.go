@@ -176,3 +176,49 @@ func TestAcquire_檔案不刪除可重用(t *testing.T) {
 		t.Errorf("expected updated port 8623, got %q", string(data))
 	}
 }
+
+// 新機器第一次啟動時 ~/.local/share/piper 還不存在，而 lock 是啟動時第一個寫進這個目錄的檔案。
+func TestAcquire_父目錄不存在時自動建立(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "share", "piper")
+	path := filepath.Join(dir, "piper.lock")
+	lf := New(path)
+
+	if err := lf.Acquire(8622); err != nil {
+		t.Fatalf("expected parent dirs to be created, got %v", err)
+	}
+	defer lf.Release()
+
+	info, err := os.Stat(dir)
+	if err != nil {
+		t.Fatalf("expected parent dir to exist: %v", err)
+	}
+	if !info.IsDir() {
+		t.Fatalf("expected %s to be a directory", dir)
+	}
+	if _, err := os.Stat(path); err != nil {
+		t.Fatalf("expected lock file to exist: %v", err)
+	}
+}
+
+// 目錄建不起來是環境問題，不能回報成「另一個 piper 正在運行」。
+func TestAcquire_父目錄建不起來時回傳一般錯誤(t *testing.T) {
+	blocker := filepath.Join(t.TempDir(), "piper")
+	if err := os.WriteFile(blocker, []byte("not a directory"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(blocker, "piper.lock")
+	lf := New(path)
+
+	err := lf.Acquire(8622)
+	if err == nil {
+		lf.Release()
+		t.Fatal("expected an error when the parent path is a regular file")
+	}
+	var locked *ErrLocked
+	if errors.As(err, &locked) {
+		t.Fatalf("expected a plain error, got ErrLocked: %v", err)
+	}
+	if !strings.Contains(err.Error(), blocker) {
+		t.Errorf("expected error to name the path %s, got %q", blocker, err)
+	}
+}

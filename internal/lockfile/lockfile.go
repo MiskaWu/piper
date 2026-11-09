@@ -7,6 +7,7 @@ package lockfile
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -38,6 +39,13 @@ func New(path string) *Lockfile {
 // (read from the file for diagnostics). The lock is automatically released
 // by the kernel when the process exits, regardless of how it dies.
 func (l *Lockfile) Acquire(port int) error {
+	// The lock is the first file piper writes at startup, so on a fresh machine
+	// its data directory doesn't exist yet.
+	dir := filepath.Dir(l.path)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("create lockfile dir %s: %w", dir, err)
+	}
+
 	f, err := os.OpenFile(l.path, os.O_CREATE|os.O_RDWR, 0o644)
 	if err != nil {
 		return fmt.Errorf("open lockfile %s: %w", l.path, err)
