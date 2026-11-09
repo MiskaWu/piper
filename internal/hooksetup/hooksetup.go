@@ -1,10 +1,10 @@
 // Package hooksetup extracts Piper hook scripts to the local filesystem
-// and injects Claude Code hook configuration into workspace settings.
+// and merges Claude Code hook configuration into a project's settings.
 //
-// DevContainer sessions get hooks via postStartCommand, but local sessions
-// (opened directly on a working directory) need the same setup. This package
-// bridges that gap: Piper calls ExtractScripts on startup, then InjectSettings
-// each time a local session is created.
+// Piper calls ExtractScripts on startup. Each new session then goes through the
+// same merge: InjectSettings points at the extracted scripts for a local
+// session, and InjectContainerSettings at the scripts baked into the image for
+// a DevContainer session, whose /workspace is the same project directory.
 package hooksetup
 
 import (
@@ -23,6 +23,9 @@ import (
 const (
 	hookScript       = "piper-hook.mjs"
 	statuslineScript = "piper-statusline.mjs"
+
+	// containerScriptDir is where base.Dockerfile installs the scripts.
+	containerScriptDir = "/usr/local/bin"
 )
 
 // scriptsDir returns ~/.local/share/piper/ (respects XDG_DATA_HOME).
@@ -120,7 +123,28 @@ func InjectSettings(workDir string) error {
 	if err != nil {
 		return err
 	}
+	return mergeIntoProject(workDir, hooksConfig(hookPath, statuslinePath))
+}
 
+// InjectContainerSettings does the same for a DevContainer session, with the
+// script paths inside the container. A project whose .devcontainer has no Piper
+// scripts built its image some other way, so hooks added there would only fail
+// on every event; it is left alone.
+func InjectContainerSettings(projectPath string) error {
+	_, err := os.Stat(filepath.Join(projectPath, ".devcontainer", hookScript))
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("check DevContainer scripts in %s: %w", projectPath, err)
+	}
+	return mergeIntoProject(projectPath, hooksConfig(
+		containerScriptDir+"/"+hookScript,
+		containerScriptDir+"/"+statuslineScript,
+	))
+}
+
+func mergeIntoProject(workDir string, config map[string]any) error {
 	dir := filepath.Join(workDir, ".claude")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return fmt.Errorf("create .claude dir in %s: %w", workDir, err)
@@ -141,7 +165,7 @@ func InjectSettings(workDir string) error {
 	if err != nil {
 		return fmt.Errorf("%s left unchanged: %w", dst, err)
 	}
-	if err := mergeSettings(settings, hooksConfig(hookPath, statuslinePath)); err != nil {
+	if err := mergeSettings(settings, config); err != nil {
 		return fmt.Errorf("%s left unchanged: %w", dst, err)
 	}
 

@@ -407,3 +407,87 @@ func TestInjectSettings_WritesThroughSymlink(t *testing.T) {
 		t.Errorf("target not merged: %v", config)
 	}
 }
+
+// seedDevcontainerProject is seedSettings for a project Piper generated a
+// DevContainer config for.
+func seedDevcontainerProject(t *testing.T, content string) (workDir, path string) {
+	t.Helper()
+	workDir, path = seedSettings(t, content)
+	dir := filepath.Join(workDir, ".devcontainer")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, hookScript), []byte("// hook"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	return workDir, path
+}
+
+func TestInjectContainerSettings_MergesWithContainerPaths(t *testing.T) {
+	workDir, path := seedDevcontainerProject(t, `{
+  "permissions": {"deny": ["Read(.env)"]},
+  "hooks": {"Stop": [{"hooks": [{"type": "command", "command": "./done.sh"}]}]}
+}`)
+
+	if err := InjectContainerSettings(workDir); err != nil {
+		t.Fatalf("InjectContainerSettings: %v", err)
+	}
+
+	config := readJSON(t, path)
+	wantPermissions := map[string]any{"deny": []any{"Read(.env)"}}
+	if !reflect.DeepEqual(config["permissions"], wantPermissions) {
+		t.Errorf("permissions = %v, want %v", config["permissions"], wantPermissions)
+	}
+	wantStop := []string{"./done.sh", "node /usr/local/bin/piper-hook.mjs"}
+	if got := commandsFor(t, config, "Stop"); !reflect.DeepEqual(got, wantStop) {
+		t.Errorf("Stop commands = %v, want %v", got, wantStop)
+	}
+	got := config["statusLine"].(map[string]any)["command"]
+	if got != "node /usr/local/bin/piper-statusline.mjs" {
+		t.Errorf("statusLine command = %v, want the path inside the container", got)
+	}
+}
+
+func TestInjectContainerSettings_SkipsProjectsWithoutPiperScripts(t *testing.T) {
+	const content = `{"model": "opus"}`
+	workDir, path := seedSettings(t, content)
+
+	if err := InjectContainerSettings(workDir); err != nil {
+		t.Fatalf("InjectContainerSettings: %v", err)
+	}
+
+	if got, _ := os.ReadFile(path); string(got) != content {
+		t.Errorf("file changed to:\n%s", got)
+	}
+
+	bare := t.TempDir()
+	if err := InjectContainerSettings(bare); err != nil {
+		t.Fatalf("InjectContainerSettings on bare project: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(bare, ".claude")); !os.IsNotExist(err) {
+		t.Errorf("expected no .claude dir to be created, stat err = %v", err)
+	}
+}
+
+func TestInject_SwitchingBetweenHostAndContainerKeepsOneEntry(t *testing.T) {
+	workDir, path := seedDevcontainerProject(t, `{}`)
+
+	if err := InjectSettings(workDir); err != nil {
+		t.Fatalf("InjectSettings: %v", err)
+	}
+	if err := InjectContainerSettings(workDir); err != nil {
+		t.Fatalf("InjectContainerSettings: %v", err)
+	}
+	config := readJSON(t, path)
+	if got := commandsFor(t, config, "Stop"); !reflect.DeepEqual(got, []string{"node /usr/local/bin/piper-hook.mjs"}) {
+		t.Errorf("after container injection, Stop commands = %v", got)
+	}
+
+	if err := InjectSettings(workDir); err != nil {
+		t.Fatalf("second InjectSettings: %v", err)
+	}
+	got := commandsFor(t, readJSON(t, path), "Stop")
+	if len(got) != 1 || strings.Contains(got[0], containerScriptDir) {
+		t.Errorf("after local injection, Stop commands = %v", got)
+	}
+}

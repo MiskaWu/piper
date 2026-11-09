@@ -126,6 +126,7 @@ func main() {
 	}
 	tmuxClient.SetLocalHost(fmt.Sprintf("127.0.0.1:%d", *port))
 	tmuxClient.SetHookInjector(hooksetup.InjectSettings)
+	tmuxClient.SetContainerHookInjector(hooksetup.InjectContainerSettings)
 	sessionStore := store.New("")
 	if err := sessionStore.Load(); err != nil {
 		log.Printf("WARNING: failed to load session store: %v", err)

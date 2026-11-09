@@ -73,7 +73,6 @@ var extraTemplates = []string{
 	"git-ssh-helper.sh",
 	"piper-hook.mjs",
 	"piper-statusline.mjs",
-	"piper-hooks.json",
 }
 
 // assembleDevcontainerFiles builds the complete set of DevContainer files: the
@@ -212,7 +211,7 @@ const devcontainerJSONTemplate = `{
 
   "remoteUser": "node",
 
-  "postStartCommand": "ssh-keyscan github.com gitlab.com bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null && sudo /usr/local/bin/init-firewall.sh && echo '{\"hasCompletedOnboarding\":true,\"installMethod\":\"native\"}' > /home/node/.claude/.claude.json && jq '{statusLine}' /usr/local/share/piper-hooks.json > /home/node/.claude/settings.json && mkdir -p /workspace/.claude && jq 'del(.statusLine)' /usr/local/share/piper-hooks.json > /workspace/.claude/settings.local.json",
+  "postStartCommand": "ssh-keyscan github.com gitlab.com bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null && sudo /usr/local/bin/init-firewall.sh && echo '{\"hasCompletedOnboarding\":true,\"installMethod\":\"native\"}' > /home/node/.claude/.claude.json",
 
   "waitFor": "postStartCommand",
 

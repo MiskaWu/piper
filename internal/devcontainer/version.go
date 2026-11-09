@@ -12,7 +12,7 @@ import (
 
 // ConfigTemplateVersion tracks the devcontainer template version.
 // Increment when base.Dockerfile, devcontainerJSONTemplate, or shell scripts change.
-const ConfigTemplateVersion = 17
+const ConfigTemplateVersion = 18
 
 // ProjectVersions holds the version metadata read from a project's devcontainer.json.
 type ProjectVersions struct {

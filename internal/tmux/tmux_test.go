@@ -487,6 +487,53 @@ func TestCreateDevcontainerSession_掛載剪貼簿目錄(t *testing.T) {
 	}
 }
 
+func TestCreateDevcontainerSession_開容器前先注入容器版hook設定(t *testing.T) {
+	mock := &mockCommander{}
+	client := NewClient(mock)
+	client.SetHookInjector(func(string) error {
+		t.Error("the local injector writes host paths and must not run for a DevContainer session")
+		return nil
+	})
+	var injected string
+	var callsAtInjection []string
+	client.SetContainerHookInjector(func(workDir string) error {
+		injected = workDir
+		callsAtInjection = append([]string(nil), mock.calls...)
+		return nil
+	})
+
+	if _, err := client.CreateDevcontainerSession("test", "/path/to/project", false); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if injected != "/path/to/project" {
+		t.Errorf("injected into %q, want the project path", injected)
+	}
+	for _, call := range callsAtInjection {
+		if strings.Contains(call, "new-session") {
+			t.Errorf("injection must happen before the container starts, but saw %q", call)
+		}
+	}
+}
+
+func TestCreateDevcontainerSession_注入失敗仍然開session(t *testing.T) {
+	mock := &mockCommander{}
+	client := NewClient(mock)
+	client.SetContainerHookInjector(func(string) error { return fmt.Errorf("settings file is not valid JSON") })
+
+	if _, err := client.CreateDevcontainerSession("test", "/path/to/project", false); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	started := false
+	for _, call := range mock.calls {
+		started = started || strings.Contains(call, "new-session")
+	}
+	if !started {
+		t.Errorf("expected the session to start anyway, calls: %v", mock.calls)
+	}
+}
+
 func TestCreateDevcontainerSession_autoMode關閉時不帶skipPermissions(t *testing.T) {
 	mock := &mockCommander{}
 	client := NewClient(mock)

@@ -48,16 +48,17 @@ type TmuxSession struct {
 }
 
 // Client wraps tmux CLI interactions.
-// HookInjector is called when a local session is created to inject
+// HookInjector is called when a session is created to inject
 // Claude Code hook configuration into the workspace directory.
 type HookInjector func(workDir string) error
 
 type Client struct {
-	cmd          Commander
-	piperHost    string       // non-loopback host IP for DevContainer → Piper API (e.g. "192.168.1.10:8622")
-	piperToken   string       // token required on piperHost; injected into DevContainers as PIPER_TOKEN
-	localHost    string       // loopback host:port for local sessions (e.g. "127.0.0.1:8622")
-	hookInjector HookInjector // optional: injects hooks into workspace settings for local sessions
+	cmd                   Commander
+	piperHost             string       // non-loopback host IP for DevContainer → Piper API (e.g. "192.168.1.10:8622")
+	piperToken            string       // token required on piperHost; injected into DevContainers as PIPER_TOKEN
+	localHost             string       // loopback host:port for local sessions (e.g. "127.0.0.1:8622")
+	hookInjector          HookInjector // optional: injects hooks into workspace settings for local sessions
+	containerHookInjector HookInjector // optional: the same for DevContainer sessions, with paths inside the container
 }
 
 // NewClient creates a new tmux Client with the given Commander.
@@ -86,6 +87,12 @@ func (c *Client) SetLocalHost(hostPort string) {
 // configuration into the workspace directory when a local session is created.
 func (c *Client) SetHookInjector(fn HookInjector) {
 	c.hookInjector = fn
+}
+
+// SetContainerHookInjector sets the function called to inject Claude Code hook
+// configuration into the project directory before a DevContainer session starts.
+func (c *Client) SetContainerHookInjector(fn HookInjector) {
+	c.containerHookInjector = fn
 }
 
 // Check verifies tmux is available by running `tmux -V`.
@@ -642,6 +649,15 @@ func (c *Client) CreateDevcontainerSession(name, projectPath string, autoMode bo
 	if c.piperToken != "" {
 		remoteEnvs += fmt.Sprintf(" --remote-env PIPER_TOKEN=%s", c.piperToken)
 	}
+	// Inject on the host before the container starts: /workspace is this project
+	// directory, so claude inside the container picks up the merged settings.
+	if c.containerHookInjector != nil {
+		if err := c.containerHookInjector(projectPath); err != nil {
+			// Non-fatal: session still works, just without hook-based status push.
+			fmt.Fprintf(os.Stderr, "WARNING: failed to inject hooks for %s: %v\n", projectPath, err)
+		}
+	}
+
 	script := fmt.Sprintf(
 		`devcontainer up --workspace-folder %s --mount %s && devcontainer exec %s --workspace-folder %s -- %s || { echo "=== 啟動失敗，按 Enter 關閉 ==="; read; }`,
 		projectPath, clipMount, remoteEnvs, projectPath, innerCmd,

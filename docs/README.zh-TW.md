@@ -42,7 +42,7 @@ piper
 
 ## piper 會在你的機器上做什麼
 
-- **把狀態 hook 與 status line 加進 `.claude/settings.local.json`。** 每開一個新的本機 session，piper 都會在它的工作目錄這樣做，你的權限、其他設定和自己的 hook 都會留著。如果檔案裡已經有你自己的 status line，piper 不會動它，儀表板也就拿不到該 session 的用量與 context 數字。檔案不是合法 JSON 時，piper 完全不碰它，該 session 沒有狀態 hook。DevContainer session 目前仍會整份取代專案裡的這個檔案。
+- **把狀態 hook 與 status line 加進 `.claude/settings.local.json`。** 每開一個新的本機 session，piper 都會在它的工作目錄這樣做，你的權限、其他設定和自己的 hook 都會留著。如果檔案裡已經有你自己的 status line，piper 不會動它，儀表板也就拿不到該 session 的用量與 context 數字。檔案不是合法 JSON 時，piper 完全不碰它，該 session 沒有狀態 hook。DevContainer session 走同一套合併，寫入的是容器內的腳本路徑。舊版 piper 產生的 DevContainer 設定，在你升級該專案的設定之前（piper 會標示有更新），每次啟動容器仍會整份蓋掉這個檔案和你的全域 `~/.claude/settings.json`。
 - **在背景執行 `claude -p`，這會計入你的 Claude 用量。** 用途是卡片上的摘要（預設 Haiku），以及你使用隨手記和每日摘要的時候。你自己輸入的描述不會被改動，該 session 也不再自動摘要。
 - **只列出名稱含 `ragent` 的 tmux session**，你其他的 tmux session 不會出現在儀表板上。啟動時它會關掉自己遺留的 `pplan-`、`psetup-` session。
 - **資料放在 `~/.local/share/piper/`**；有設 `XDG_DATA_HOME` 的話放在 `$XDG_DATA_HOME/piper/`。

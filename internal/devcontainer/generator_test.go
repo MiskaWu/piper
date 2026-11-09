@@ -26,9 +26,6 @@ func testTemplateFS() fstest.MapFS {
 		"templates/piper-statusline.mjs": &fstest.MapFile{
 			Data: []byte("#!/usr/bin/env node\n// piper statusline"),
 		},
-		"templates/piper-hooks.json": &fstest.MapFile{
-			Data: []byte(`{"hooks":{},"statusLine":{"type":"command","command":"node /usr/local/bin/piper-statusline.mjs"}}`),
-		},
 	}
 }
 
@@ -172,6 +169,20 @@ func TestNormalizeFragment(t *testing.T) {
 				t.Errorf("normalizeFragment() = %q, want %q", got, tt.expected)
 			}
 		})
+	}
+}
+
+// The container's ~/.claude is a bind mount of the host's and /workspace is the
+// project itself, so a redirect into either overwrites the user's own files.
+func TestRenderDevcontainerJSON_容器啟動時不寫使用者的設定檔(t *testing.T) {
+	result, err := renderDevcontainerJSON(GenerateConfig{ProjectName: "my-app", FirewallMode: "whitelist"}, nil)
+	if err != nil {
+		t.Fatalf("renderDevcontainerJSON: %v", err)
+	}
+	for _, target := range []string{"/home/node/.claude/settings.json", "settings.local.json", "piper-hooks.json"} {
+		if strings.Contains(result, target) {
+			t.Errorf("rendered config must not touch %s:\n%s", target, result)
+		}
 	}
 }
 

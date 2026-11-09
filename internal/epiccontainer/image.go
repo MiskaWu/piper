@@ -69,7 +69,6 @@ func buildImage(templateFS fs.FS, targetVersion string) error {
 		"templates/git-ssh-helper.sh",
 		"templates/piper-hook.mjs",
 		"templates/piper-statusline.mjs",
-		"templates/piper-hooks.json",
 	}
 	for _, name := range filesToExtract {
 		data, err := fs.ReadFile(templateFS, name)

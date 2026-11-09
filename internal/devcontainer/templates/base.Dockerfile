@@ -24,7 +24,6 @@ RUN usermod -aG sudo node \
 COPY init-firewall.sh /usr/local/bin/
 COPY git-ssh-helper.sh /usr/local/bin/
 COPY piper-hook.mjs piper-statusline.mjs /usr/local/bin/
-COPY piper-hooks.json /usr/local/share/
 RUN chmod +x /usr/local/bin/init-firewall.sh /usr/local/bin/git-ssh-helper.sh \
     /usr/local/bin/piper-hook.mjs /usr/local/bin/piper-statusline.mjs \
     && echo "node ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/node-firewall \
