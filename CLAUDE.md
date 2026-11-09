@@ -99,7 +99,7 @@
 - 事件映射：`UserPromptSubmit`/`PreToolUse`/`SubagentStart` → working、`Stop` → idle、`StopFailure`/`Notification[permission]` → needs_input
 - 另有 `piper-statusline.mjs` 透過 `POST /api/internal/session-meta` 推送 session metadata（cost、context%、model、rateLimits）
 - `PIPER_HOST` 由 Piper 從 `--host` flag 解析非 loopback 地址後注入 DevContainer（`devcontainer exec --remote-env`），同時注入 `PIPER_TOKEN`；容器內呼叫 Piper API 要帶 `Authorization: Bearer $PIPER_TOKEN`
-- Hook 設定透過 `postStartCommand` 合併到 `/workspace/.claude/settings.local.json`（與使用者設定累加，不覆蓋）
+- Hook 設定透過 `postStartCommand` 寫到 `/workspace/.claude/settings.local.json`（目前整份取代專案裡的這個檔案，尚未比照本機 session 的 `hooksetup.InjectSettings` 合併）
 - 狀態與 metadata 存在 Piper 記憶體中（`hookDataStore`），不再寫入檔案
 
 **輔助來源**：`tmux capture-pane -p -S -50` 仍用於擷取 `lastLine`（最後有意義的輸出行）

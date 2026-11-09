@@ -42,7 +42,7 @@ The interface comes in English and Traditional Chinese, with dark and light them
 
 ## What piper does on your machine
 
-- **It overwrites `.claude/settings.local.json`** in the working directory of each new local session, to install its status hooks and status line. If you keep your own settings in that file, they are replaced.
+- **It adds its status hooks and status line to `.claude/settings.local.json`** in the working directory of each new local session. Your permissions, other settings and own hooks stay as they are. If the file already sets a status line of your own, piper leaves it, and the dashboard gets no usage or context figures from that session. If the file is not valid JSON, piper does not touch it and the session runs without status hooks. A DevContainer session still replaces the project's copy of this file.
 - **It runs `claude -p` in the background**, which counts against your Claude usage: for the summaries on the cards (Haiku by default), and for inbox ideas and digests when you use those. A description you type yourself is left alone and stops the automatic summary for that session.
 - **It only lists tmux sessions whose name contains `ragent`**, so your other tmux sessions stay out of the dashboard. At startup it closes its own leftover `pplan-` and `psetup-` sessions.
 - **It keeps its data in `~/.local/share/piper/`**, or `$XDG_DATA_HOME/piper/` if that is set.
